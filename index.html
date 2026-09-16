@@ -1299,10 +1299,8 @@ main.open .panel{transform:translateX(0)}/* panel slide in */
   ──────────────────────────────────────────────────── */
   body{
     display: block !important;
-    height: auto !important;
-    min-height: 100dvh !important;
-    overflow-y: auto !important;
-    overflow-x: hidden !important;
+    height: 100dvh !important;
+    overflow: hidden !important;
     background: #1C1410 !important;
   }
 
@@ -1334,8 +1332,8 @@ main.open .panel{transform:translateX(0)}/* panel slide in */
      4. MAIN — alto automático, sin clipping
   ──────────────────────────────────────────────────── */
   main{
-    height: auto !important;
-    overflow: visible !important;
+    height: calc(100dvh - var(--navbar-h) - var(--infobar-h)) !important;
+    overflow: hidden !important;
     display: block !important;
     width: 100% !important;
   }
@@ -1511,7 +1509,7 @@ main.open .panel{transform:translateX(0)}/* panel slide in */
 .mobile-footer { display: none; }
 @media (max-width: 768px) {
   .mobile-footer {
-    display: block;
+    display: none !important;
     background: #12100A;
     border-top: 2px solid rgba(201,169,110,.45);
     padding: 40px 24px 120px;
