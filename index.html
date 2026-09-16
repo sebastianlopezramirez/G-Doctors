@@ -1156,28 +1156,18 @@ main.open .panel{transform:translateX(0)}/* panel slide in */
   flex:0 0 50%;width:50%;
   display:flex;flex-direction:column;justify-content:flex-start;
   padding:28px 36px 28px 28px;
-  background-image:url('hero-model.jpg');
-  background-size:cover;
-  background-position:68% 8%;
-  background-repeat:no-repeat;
+  background:linear-gradient(165deg,#FAF5EE 0%,#F0E8D6 55%,#E8D9C0 100%);
   border-left:1px solid rgba(201,169,110,.22);
   position:relative; overflow-y:auto; overflow-x:hidden;
   box-sizing:border-box;
   height:100%;
 }
-/* Overlay gradiente: texto legible izquierda, cara visible derecha */
+/* Textura sutil — círculo dorado difuso de fondo */
 .valor-panel::before{
-  content:'';
-  position:absolute;
-  inset:0;
-  background:linear-gradient(
-    to right,
-    rgba(14,9,4,0.92) 0%,
-    rgba(14,9,4,0.85) 42%,
-    rgba(14,9,4,0.45) 62%,
-    rgba(14,9,4,0.08) 100%
-  );
-  pointer-events:none;
+  content:'';position:absolute;
+  width:420px;height:420px;border-radius:50%;
+  background:radial-gradient(circle,rgba(201,169,110,.12) 0%,transparent 70%);
+  top:-80px;right:-80px;pointer-events:none;
   z-index:0;
 }
 .valor-panel::after{
@@ -1198,16 +1188,15 @@ main.open .panel{transform:translateX(0)}/* panel slide in */
   font-family:'Cormorant Garamond',serif;
   font-size:clamp(22px,3.2vw,36px);
   font-weight:700;line-height:1.18;
-  color:#FAF5EE;
+  color:var(--ink);
   margin-bottom:8px;
   position:relative;z-index:1;
-  text-shadow:0 2px 12px rgba(0,0,0,0.5);
 }
 .vp-headline em{
   font-style:italic;color:var(--gold);
 }
 .vp-sub{
-  font-size:12.5px;color:rgba(250,245,238,0.82);
+  font-size:12.5px;color:var(--muted);
   line-height:1.6;margin-bottom:22px;
   position:relative;z-index:1;
   max-width:340px;
@@ -1231,11 +1220,11 @@ main.open .panel{transform:translateX(0)}/* panel slide in */
 .vp-benefit-icon svg{ color:var(--gold) }
 .vp-benefit-text{ flex:1 }
 .vp-benefit-title{
-  font-size:12px;font-weight:700;color:#FAF5EE;
+  font-size:12px;font-weight:700;color:var(--ink);
   margin-bottom:1px;line-height:1.3;
 }
 .vp-benefit-desc{
-  font-size:10.5px;color:rgba(250,245,238,0.72);line-height:1.45;
+  font-size:10.5px;color:var(--muted);line-height:1.45;
 }
 /* Divisor dorado */
 .vp-divider{
@@ -1290,8 +1279,8 @@ main.open .panel{transform:translateX(0)}/* panel slide in */
 }
 .vp-stars{ display:flex;gap:2px }
 .vp-stars svg{ color:#C9A96E }
-.vp-rating-text{ font-size:10px;color:rgba(250,245,238,0.70) }
-.vp-rating-score{ font-weight:700;color:#FAF5EE;font-size:11px }
+.vp-rating-text{ font-size:10px;color:var(--muted) }
+.vp-rating-score{ font-weight:700;color:var(--ink);font-size:11px }
 /* Responsive: en móvil va abajo */
 @media(max-width:680px){
   /* .stage: inherits flex column from <=768px media query above */
