@@ -1156,25 +1156,29 @@ main.open .panel{transform:translateX(0)}/* panel slide in */
   flex:0 0 50%;width:50%;
   display:flex;flex-direction:column;justify-content:flex-start;
   padding:28px 36px 28px 28px;
-  background:linear-gradient(165deg,#FAF5EE 0%,#F0E8D6 55%,#E8D9C0 100%);
+  background-image:url('spa-bg.jpg');
+  background-size:cover;background-position:center center;
   border-left:1px solid rgba(201,169,110,.22);
   position:relative; overflow-y:auto; overflow-x:hidden;
   box-sizing:border-box;
   height:100%;
 }
-/* Textura sutil — círculo dorado difuso de fondo */
+/* Overlay oscuro sobre imagen para legibilidad del texto */
 .valor-panel::before{
-  content:'';position:absolute;
-  width:420px;height:420px;border-radius:50%;
-  background:radial-gradient(circle,rgba(201,169,110,.12) 0%,transparent 70%);
-  top:-80px;right:-80px;pointer-events:none;
+  content:'';position:absolute;inset:0;
+  background:linear-gradient(to bottom,
+    rgba(8,6,4,.70) 0%,
+    rgba(8,6,4,.58) 50%,
+    rgba(8,6,4,.65) 100%);
+  pointer-events:none;
   z-index:0;
 }
 .valor-panel::after{
-  content:'';position:absolute;
-  width:280px;height:280px;border-radius:50%;
-  background:radial-gradient(circle,rgba(201,169,110,.10) 0%,transparent 70%);
-  bottom:-60px;left:-40px;pointer-events:none;
+  content:'';position:absolute;inset:0;
+  background:linear-gradient(to right,
+    rgba(0,0,0,.18) 0%,
+    transparent 100%);
+  pointer-events:none;
   z-index:0;
 }
 
@@ -1188,7 +1192,7 @@ main.open .panel{transform:translateX(0)}/* panel slide in */
   font-family:'Cormorant Garamond',serif;
   font-size:clamp(22px,3.2vw,36px);
   font-weight:700;line-height:1.18;
-  color:var(--ink);
+  color:#FAF5EE;
   margin-bottom:8px;
   position:relative;z-index:1;
 }
@@ -1196,7 +1200,7 @@ main.open .panel{transform:translateX(0)}/* panel slide in */
   font-style:italic;color:var(--gold);
 }
 .vp-sub{
-  font-size:12.5px;color:var(--muted);
+  font-size:12.5px;color:rgba(255,255,255,.82);
   line-height:1.6;margin-bottom:22px;
   position:relative;z-index:1;
   max-width:340px;
@@ -1212,19 +1216,19 @@ main.open .panel{transform:translateX(0)}/* panel slide in */
 }
 .vp-benefit-icon{
   width:28px;height:28px;border-radius:50%;
-  background:linear-gradient(135deg,rgba(201,169,110,.18),rgba(201,169,110,.08));
-  border:1px solid rgba(201,169,110,.35);
+  background:linear-gradient(135deg,rgba(201,169,110,.30),rgba(201,169,110,.15));
+  border:1px solid rgba(201,169,110,.55);
   display:flex;align-items:center;justify-content:center;
   flex-shrink:0;margin-top:1px;
 }
 .vp-benefit-icon svg{ color:var(--gold) }
 .vp-benefit-text{ flex:1 }
 .vp-benefit-title{
-  font-size:12px;font-weight:700;color:var(--ink);
+  font-size:12px;font-weight:700;color:#FAF5EE;
   margin-bottom:1px;line-height:1.3;
 }
 .vp-benefit-desc{
-  font-size:10.5px;color:var(--muted);line-height:1.45;
+  font-size:10.5px;color:rgba(255,255,255,.75);line-height:1.45;
 }
 /* Divisor dorado */
 .vp-divider{
@@ -1259,10 +1263,10 @@ main.open .panel{transform:translateX(0)}/* panel slide in */
   display:inline-flex;align-items:center;gap:7px;
   padding:10px 20px;
   background:transparent;
-  border:1.5px solid var(--gold);
+  border:1.5px solid rgba(201,169,110,.85);
   border-radius:28px;
   font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;
-  color:var(--ink);cursor:pointer;
+  color:#FAF5EE;cursor:pointer;
   transition:background .2s,transform .2s,box-shadow .2s;
   text-decoration:none;
 }
@@ -1279,8 +1283,8 @@ main.open .panel{transform:translateX(0)}/* panel slide in */
 }
 .vp-stars{ display:flex;gap:2px }
 .vp-stars svg{ color:#C9A96E }
-.vp-rating-text{ font-size:10px;color:var(--muted) }
-.vp-rating-score{ font-weight:700;color:var(--ink);font-size:11px }
+.vp-rating-text{ font-size:10px;color:rgba(255,255,255,.72) }
+.vp-rating-score{ font-weight:700;color:#FAF5EE;font-size:11px }
 /* Responsive: en móvil va abajo */
 @media(max-width:680px){
   /* .stage: inherits flex column from <=768px media query above */
