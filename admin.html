@@ -434,15 +434,52 @@ td { padding: 11px 16px; font-size: .82rem; color: var(--text); white-space: now
 
 /* ── Registros de pacientes ── */
 .reg-filters{display:flex;flex-wrap:wrap;gap:10px;margin-bottom:18px;align-items:flex-end;}
-.reg-filters label{display:flex;flex-direction:column;gap:4px;font-size:10.5px;color:rgba(235,217,184,.55);letter-spacing:.05em;text-transform:uppercase;}
-.reg-filters input,.reg-filters select{background:#1A1510;border:1px solid rgba(201,169,110,.22);color:#EBD9B8;border-radius:6px;padding:7px 10px;font-size:12.5px;font-family:inherit;outline:none;min-width:130px;}
-.reg-filters input:focus,.reg-filters select:focus{border-color:rgba(201,169,110,.65);}
+.reg-filters label{display:flex;flex-direction:column;gap:4px;font-size:10.5px;color:var(--text-dim);letter-spacing:.05em;text-transform:uppercase;}
+.reg-filters input,.reg-filters select{background:var(--card2);border:1px solid var(--border);color:var(--text);border-radius:6px;padding:7px 10px;font-size:12.5px;font-family:inherit;outline:none;min-width:130px;}
+.reg-filters input:focus,.reg-filters select:focus{border-color:var(--gold);}
 .reg-filters .btn-sm{align-self:flex-end;}
 .reg-table-wrap{overflow-x:auto;}
 .reg-table th[data-col]{cursor:pointer;user-select:none;}
 .reg-table th[data-col]:hover{color:#C9A96E;}
 .reg-export-bar{display:flex;justify-content:flex-end;margin-bottom:12px;}
 .reg-export-bar button{display:flex;align-items:center;gap:6px;}
+
+/* ══ TEMA LUZ ══ */
+:root[data-theme="light"] {
+  --bg:        #F5F3EE;
+  --surface:   #FFFFFF;
+  --card:      #FAFAF8;
+  --card2:     #F0EDE7;
+  --border:    rgba(139,107,58,.20);
+  --gold:      #8B6A2E;
+  --gold-dim:  rgba(139,107,58,.70);
+  --gold-glow: rgba(139,107,58,.08);
+  --text:      #1A1208;
+  --text-dim:  rgba(26,18,8,.52);
+}
+/* botón toggle */
+.theme-btn {
+  width: 34px; height: 34px;
+  border-radius: 8px;
+  background: var(--gold-glow);
+  border: 1px solid var(--border);
+  color: var(--gold);
+  cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  transition: background .15s;
+  flex-shrink: 0;
+}
+.theme-btn:hover { background: var(--gold-glow); filter: brightness(1.15); }
+.theme-btn svg { width: 16px; height: 16px; }
+/* reg-filters usando variables */
+.reg-filters label { color: var(--text-dim); }
+.reg-filters input, .reg-filters select {
+  background: var(--card2);
+  border: 1px solid var(--border);
+  color: var(--text);
+}
+.reg-filters input:focus, .reg-filters select:focus { border-color: var(--gold); }
+#reg-count { color: var(--text-dim); }
 </style>
 </head>
 <body>
@@ -533,6 +570,10 @@ td { padding: 11px 16px; font-size: .82rem; color: var(--text); white-space: now
       </div>
       <div class="topbar-title" id="topbar-title">Dashboard</div>
       <div class="topbar-badge" id="topbar-period">Sep 2024</div>
+      <button class="theme-btn" id="theme-btn" onclick="toggleTheme()" title="Cambiar tema">
+        <svg id="theme-icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="display:none"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
+        <svg id="theme-icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+      </button>
       <div class="topbar-avatar">DR</div>
     </header>
 
@@ -838,6 +879,7 @@ function doLogout() {
 
 // Verificar sesión al cargar
 window.addEventListener('DOMContentLoaded', () => {
+  initTheme();
   let auth = false;
   try { auth = sessionStorage.getItem('gd_auth') === '1'; } catch(e){}
   if (auth) {
@@ -980,6 +1022,42 @@ function toggleSidebar() {
 function closeSidebar() {
   document.getElementById('sidebar').classList.remove('open');
   document.getElementById('overlay').classList.remove('show');
+}
+
+/* ══ TEMA ══ */
+function toggleTheme() {
+  const html = document.documentElement;
+  const isLight = html.getAttribute('data-theme') === 'light';
+  const next = isLight ? 'dark' : 'light';
+  html.setAttribute('data-theme', next);
+  try { sessionStorage.setItem('gd_theme', next); } catch(e){}
+  document.getElementById('theme-icon-sun').style.display  = next === 'light' ? 'block' : 'none';
+  document.getElementById('theme-icon-moon').style.display = next === 'dark'  ? 'block' : 'none';
+  // Actualizar colores de Chart.js al vuelo
+  const isDark = next === 'dark';
+  const newText = isDark ? 'rgba(235,217,184,.4)' : 'rgba(26,18,8,.35)';
+  const newGrid = isDark ? 'rgba(201,169,110,.08)' : 'rgba(139,107,58,.10)';
+  Chart.defaults.color = newText;
+  Object.values(Chart.instances).forEach(c => {
+    if(c.options.scales) {
+      Object.values(c.options.scales).forEach(sc => {
+        if(sc.ticks) sc.ticks.color = newText;
+        if(sc.grid)  sc.grid.color  = newGrid;
+      });
+    }
+    c.update('none');
+  });
+}
+
+function initTheme() {
+  let saved = 'dark';
+  try { saved = sessionStorage.getItem('gd_theme') || 'dark'; } catch(e){}
+  document.documentElement.setAttribute('data-theme', saved);
+  const isLight = saved === 'light';
+  const sunEl  = document.getElementById('theme-icon-sun');
+  const moonEl = document.getElementById('theme-icon-moon');
+  if(sunEl)  sunEl.style.display  = isLight ? 'block' : 'none';
+  if(moonEl) moonEl.style.display = isLight ? 'none'  : 'block';
 }
 
 /* ══ CHARTS ══ */
