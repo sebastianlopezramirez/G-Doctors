@@ -1496,6 +1496,105 @@ main.open .panel{transform:translateX(0)}/* panel slide in */
 @media (min-width: 769px){
   .mobile-scroll-hint{ display: none !important }
 }
+
+/* ── MOBILE FOOTER INLINE ── */
+.mobile-footer { display: none; }
+@media (max-width: 768px) {
+  .mobile-footer {
+    display: block;
+    background: #12100A;
+    border-top: 2px solid rgba(201,169,110,.45);
+    padding: 40px 24px 120px;
+    color: #C9A96E;
+  }
+  .mf-logo {
+    font-family: 'Cinzel', 'Georgia', serif;
+    font-size: 1.4rem;
+    letter-spacing: 0.12em;
+    color: #C9A96E;
+    margin-bottom: 6px;
+  }
+  .mf-tagline {
+    font-size: 0.78rem;
+    color: rgba(201,169,110,.55);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    margin-bottom: 28px;
+  }
+  .mf-divider {
+    height: 1px;
+    background: rgba(201,169,110,.25);
+    margin: 24px 0;
+  }
+  .mf-section-title {
+    font-size: 0.68rem;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: rgba(201,169,110,.5);
+    margin-bottom: 14px;
+    font-weight: 600;
+  }
+  .mf-contact-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    margin-bottom: 14px;
+    color: rgba(255,255,255,.82);
+    font-size: 0.9rem;
+    line-height: 1.45;
+  }
+  .mf-contact-icon {
+    flex-shrink: 0;
+    width: 20px;
+    height: 20px;
+    margin-top: 2px;
+    color: #C9A96E;
+    opacity: 0.8;
+  }
+  .mf-wa-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    width: 100%;
+    padding: 16px;
+    background: #25D366;
+    color: #fff;
+    border-radius: 12px;
+    font-size: 1rem;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    margin: 24px 0 20px;
+    text-decoration: none;
+    box-shadow: 0 4px 18px rgba(37,211,102,.3);
+  }
+  .mf-social-row {
+    display: flex;
+    gap: 14px;
+    justify-content: center;
+    margin-bottom: 24px;
+  }
+  .mf-social-btn {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    padding: 10px 18px;
+    border: 1px solid rgba(201,169,110,.35);
+    border-radius: 8px;
+    color: rgba(201,169,110,.8);
+    font-size: 0.82rem;
+    letter-spacing: 0.05em;
+    text-decoration: none;
+  }
+  .mf-copyright {
+    text-align: center;
+    font-size: 0.72rem;
+    color: rgba(201,169,110,.35);
+    margin-top: 4px;
+    line-height: 1.6;
+  }
+}
+
 </style>
 
 <!-- ══ NAVBAR PRINCIPAL ══ -->
@@ -1934,6 +2033,44 @@ main.open .panel{transform:translateX(0)}/* panel slide in */
   </div>
 
   </aside>
+
+  <!-- FOOTER SCROLLEABLE solo movil -->
+  <footer class="mobile-footer">
+    <div class="mf-logo">G DOCTORS</div>
+    <div class="mf-tagline">Medicina Estetica &middot; Medellin</div>
+    <div class="mf-section-title">Contactanos</div>
+    <div class="mf-contact-item">
+      <svg class="mf-contact-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07A19.5 19.5 0 013.07 9.81 19.79 19.79 0 01.05 1.22 2 2 0 012 0h3a2 2 0 012 1.72c.13 1.05.38 2.08.73 3.06a2 2 0 01-.45 2.11L6.09 8.09a16 16 0 006.29 6.29l1.2-1.2a2 2 0 012.11-.45c.98.35 2 .6 3.06.73A2 2 0 0122 16.92z"/></svg>
+      <span>+57 302 344 3225</span>
+    </div>
+    <div class="mf-contact-item">
+      <svg class="mf-contact-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg>
+      <span>Medellin, Antioquia, Colombia<br><small style="opacity:.65">Direccion exacta al confirmar cita</small></span>
+    </div>
+    <div class="mf-contact-item">
+      <svg class="mf-contact-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+      <span>Lun&ndash;Vie: 8:00 am &ndash; 6:00 pm &nbsp;|&nbsp; Sab: 9:00 am &ndash; 2:00 pm</span>
+    </div>
+    <div class="mf-divider"></div>
+    <div class="mf-section-title">Escribenos por WhatsApp</div>
+    <a class="mf-wa-btn" href="https://wa.me/573023443225?text=Hola%2C%20me%20interesa%20una%20cita%20en%20G%20Doctors" target="_blank" rel="noopener">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/><path d="M12 0C5.373 0 0 5.373 0 12c0 2.127.554 4.122 1.523 5.857L0 24l6.295-1.523A11.954 11.954 0 0012 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 21.818a9.818 9.818 0 01-5.007-1.375l-.36-.213-3.73.902.918-3.641-.234-.375A9.818 9.818 0 1112 21.818z"/></svg>
+      WhatsApp &middot; Respuesta inmediata
+    </a>
+    <div class="mf-social-row">
+      <a class="mf-social-btn" href="https://instagram.com/gdoctors.medellin" target="_blank" rel="noopener">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"/><circle cx="12" cy="12" r="5"/></svg>
+        Instagram
+      </a>
+      <a class="mf-social-btn" href="tel:+573023443225">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07A19.5 19.5 0 013.07 9.81 19.79 19.79 0 01.05 1.22 2 2 0 012 0h3a2 2 0 012 1.72c.13 1.05.38 2.08.73 3.06a2 2 0 01-.45 2.11L6.09 8.09a16 16 0 006.29 6.29l1.2-1.2a2 2 0 012.11-.45c.98.35 2 .6 3.06.73A2 2 0 0122 16.92z"/></svg>
+        Llamar
+      </a>
+    </div>
+    <div class="mf-copyright">&copy; 2024 G Doctors &middot; Medicina Estetica<br>Todos los derechos reservados</div>
+  </footer>
+
+
   </div><!-- /stage -->
 </main>
 
