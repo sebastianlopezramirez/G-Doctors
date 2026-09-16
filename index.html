@@ -1175,6 +1175,29 @@ main.open .panel{transform:translateX(0)}/* panel slide in */
   background:radial-gradient(circle,rgba(201,169,110,.08) 0%,transparent 70%);
   bottom:-60px;left:-40px;pointer-events:none;
 }
+/* ── HERO: texto + imagen lado a lado ── */
+.vp-hero{
+  display:flex;
+  align-items:flex-start;
+  gap:16px;
+  margin-bottom:4px;
+}
+.vp-hero-text{
+  flex:1 1 0;
+  min-width:0;
+}
+.vp-hero-img{
+  flex:0 0 auto;
+  width:120px;
+}
+.vp-hero-img img{
+  width:100%;
+  height:180px;
+  object-fit:cover;
+  object-position:center top;
+  border-radius:10px;
+  display:block;
+}
 .vp-eyebrow{
   font-size:9px;letter-spacing:.28em;text-transform:uppercase;
   color:var(--gold);font-weight:700;
@@ -2012,19 +2035,26 @@ main.open .panel{transform:translateX(0)}/* panel slide in */
 <!-- ══ PROPUESTA DE VALOR — columna derecha ══════════════════════════ -->
   <aside class="valor-panel">
 
-  <p class="vp-eyebrow">Medicina Estética en Medellín</p>
+  <div class="vp-hero">
+    <div class="vp-hero-text">
+      <p class="vp-eyebrow">Medicina Estética en Medellín</p>
 
-  <h2 class="vp-headline">
-    Potencia tu Belleza Natural<br>
-    con la Confianza de los<br>
-    <em>Expertos</em>
-  </h2>
+      <h2 class="vp-headline">
+        Potencia tu Belleza Natural<br>
+        con la Confianza de los<br>
+        <em>Expertos</em>
+      </h2>
 
-  <p class="vp-sub">
-    Procedimientos seguros, resultados reales.<br>
-    Descubre tu versión más radiante con el equipo<br>
-    líder en estética de Medellín.
-  </p>
+      <p class="vp-sub">
+        Procedimientos seguros, resultados reales.<br>
+        Descubre tu versión más radiante con el equipo<br>
+        líder en estética de Medellín.
+      </p>
+    </div>
+    <div class="vp-hero-img">
+      <img src="hero-model.jpg" alt="Medicina estética en Medellín – resultado natural" loading="lazy">
+    </div>
+  </div>
 
   <div class="vp-divider"></div>
 
