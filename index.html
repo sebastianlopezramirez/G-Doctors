@@ -1342,7 +1342,7 @@ main.open .panel{transform:translateX(0)}/* panel slide in */
   .stage-left{
     flex: 0 0 auto !important;
     width: 100% !important;
-    height: 100dvh !important;
+    height: calc(100dvh - var(--navbar-h) - var(--infobar-h)) !important;
     position: relative !important;
     overflow: hidden !important;
   }
