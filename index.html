@@ -1625,8 +1625,35 @@ main.open .panel{transform:translateX(0)}/* panel slide in */
 }
 
 
+/* ── BOTÓN ADMIN desktop (valor-panel) ── */
+.vp-admin-link {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  margin-top: 20px;
+  padding: 8px 16px;
+  border: 1px solid rgba(201,169,110,.35);
+  border-radius: 7px;
+  color: rgba(201,169,110,.65);
+  font-size: .68rem;
+  letter-spacing: .12em;
+  text-decoration: none;
+  text-transform: uppercase;
+  background: rgba(201,169,110,.04);
+  transition: all .2s;
+  width: 100%;
+  box-sizing: border-box;
+}
+.vp-admin-link:hover {
+  border-color: rgba(201,169,110,.7);
+  color: #C9A96E;
+  background: rgba(201,169,110,.10);
+}
+
 /* ── BOTÓN ACCESO ADMIN ── */
 @media (max-width: 768px) {
+  .vp-admin-link { display: none; }  /* en móvil se usa mf-admin-link del footer */
   .mf-admin-link {
     display: flex;
     align-items: center;
@@ -2106,6 +2133,15 @@ main.open .panel{transform:translateX(0)}/* panel slide in */
     <span class="vp-rating-score">4.9</span>
     <span class="vp-rating-text">· Google Reviews · Medellín</span>
   </div>
+
+  <!-- Acceso admin en desktop (valor-panel) -->
+  <a class="vp-admin-link" href="https://claude.ai/artifact/EXcxctcmrNADFXr8vWaLQx" target="_blank" rel="noopener">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="13" height="13">
+      <rect x="3" y="11" width="18" height="11" rx="2"/>
+      <path d="M7 11V7a5 5 0 0110 0v4"/>
+    </svg>
+    Acceso administrativo
+  </a>
 
   </aside>
 
