@@ -1,0 +1,822 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Panel Administrativo — G Doctors</title>
+<meta name="robots" content="noindex, nofollow">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<style>
+/* ── TOKENS ── */
+:root {
+  --bg:        #0C0A06;
+  --surface:   #141108;
+  --card:      #1C1810;
+  --card2:     #221E13;
+  --border:    rgba(201,169,110,.18);
+  --gold:      #C9A96E;
+  --gold-dim:  rgba(201,169,110,.55);
+  --gold-glow: rgba(201,169,110,.12);
+  --text:      #EBD9B8;
+  --text-dim:  rgba(235,217,184,.55);
+  --green:     #34D399;
+  --red:       #F87171;
+  --blue:      #60A5FA;
+  --sidebar-w: 230px;
+  --topbar-h:  56px;
+  font-family: 'Inter', system-ui, sans-serif;
+  font-size: 14px;
+}
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html, body { height: 100%; background: var(--bg); color: var(--text); }
+
+/* ══════════════════════════════════════
+   LOGIN SCREEN
+══════════════════════════════════════ */
+#login-screen {
+  position: fixed;
+  inset: 0;
+  background: var(--bg);
+  z-index: 9999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+}
+.login-box {
+  width: 100%;
+  max-width: 380px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 40px 32px 36px;
+  text-align: center;
+}
+.login-brand {
+  font-family: 'Georgia', serif;
+  font-size: 1.5rem;
+  letter-spacing: .18em;
+  color: var(--gold);
+  font-weight: 700;
+  margin-bottom: 4px;
+}
+.login-sub {
+  font-size: .7rem;
+  color: var(--gold-dim);
+  letter-spacing: .12em;
+  text-transform: uppercase;
+  margin-bottom: 32px;
+}
+.login-label {
+  display: block;
+  font-size: .68rem;
+  letter-spacing: .12em;
+  text-transform: uppercase;
+  color: var(--text-dim);
+  text-align: left;
+  margin-bottom: 8px;
+}
+.login-input {
+  width: 100%;
+  padding: 11px 16px;
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  color: var(--text);
+  font-size: .9rem;
+  outline: none;
+  transition: border-color .2s;
+  margin-bottom: 20px;
+  letter-spacing: .06em;
+}
+.login-input:focus { border-color: var(--gold); }
+.login-input.error { border-color: var(--red); }
+.login-btn {
+  width: 100%;
+  padding: 12px;
+  background: var(--gold);
+  color: #000;
+  font-size: .82rem;
+  font-weight: 700;
+  letter-spacing: .1em;
+  text-transform: uppercase;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background .2s;
+}
+.login-btn:hover { background: #B8966A; }
+.login-error {
+  margin-top: 14px;
+  font-size: .75rem;
+  color: var(--red);
+  display: none;
+}
+
+/* ══════════════════════════════════════
+   APP LAYOUT
+══════════════════════════════════════ */
+.app { display: flex; height: 100%; }
+
+.sidebar {
+  width: var(--sidebar-w);
+  flex-shrink: 0;
+  background: var(--surface);
+  border-right: 1px solid var(--border);
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  position: fixed;
+  top: 0; left: 0;
+  z-index: 50;
+  transition: transform .25s;
+}
+.sidebar-logo {
+  padding: 20px 20px 16px;
+  border-bottom: 1px solid var(--border);
+}
+.sidebar-logo .brand {
+  font-family: 'Georgia', serif;
+  font-size: 1.1rem;
+  letter-spacing: .12em;
+  color: var(--gold);
+  font-weight: 700;
+}
+.sidebar-logo .sub {
+  font-size: .68rem;
+  color: var(--gold-dim);
+  letter-spacing: .1em;
+  text-transform: uppercase;
+  margin-top: 2px;
+}
+.sidebar-logo .badge {
+  display: inline-block;
+  background: var(--gold-glow);
+  border: 1px solid var(--border);
+  color: var(--gold-dim);
+  font-size: .6rem;
+  letter-spacing: .08em;
+  padding: 2px 6px;
+  border-radius: 4px;
+  margin-top: 6px;
+}
+.nav-group { padding: 12px 0 4px; }
+.nav-label {
+  font-size: .6rem;
+  letter-spacing: .18em;
+  text-transform: uppercase;
+  color: var(--gold-dim);
+  padding: 0 16px 6px;
+  opacity: .6;
+}
+.nav-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 9px 16px;
+  color: var(--text-dim);
+  cursor: pointer;
+  transition: background .15s, color .15s;
+  font-size: .83rem;
+  border-left: 3px solid transparent;
+  user-select: none;
+}
+.nav-item:hover { background: var(--gold-glow); color: var(--text); }
+.nav-item.active {
+  background: var(--gold-glow);
+  color: var(--gold);
+  border-left-color: var(--gold);
+}
+.nav-item svg { width: 16px; height: 16px; flex-shrink: 0; }
+
+.main-wrap {
+  margin-left: var(--sidebar-w);
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-height: 100%;
+  overflow-x: hidden;
+}
+
+.topbar {
+  height: var(--topbar-h);
+  background: var(--surface);
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  padding: 0 24px;
+  gap: 16px;
+  position: sticky; top: 0; z-index: 40;
+}
+.topbar-title { font-size: .95rem; font-weight: 600; color: var(--text); flex: 1; }
+.topbar-badge {
+  background: var(--gold-glow);
+  border: 1px solid var(--border);
+  color: var(--gold);
+  font-size: .7rem;
+  padding: 4px 10px;
+  border-radius: 20px;
+  letter-spacing: .05em;
+}
+.topbar-avatar {
+  width: 32px; height: 32px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--gold), #8B6A3E);
+  display: flex; align-items: center; justify-content: center;
+  font-size: .75rem; font-weight: 700; color: #000;
+}
+.hamburger { display: none; cursor: pointer; padding: 4px; }
+
+.content { padding: 24px; flex: 1; }
+.view { display: none; }
+.view.active { display: block; }
+
+/* KPI */
+.kpi-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 16px;
+  margin-bottom: 24px;
+}
+.kpi-card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 18px 20px;
+}
+.kpi-label {
+  font-size: .68rem;
+  letter-spacing: .12em;
+  text-transform: uppercase;
+  color: var(--gold-dim);
+  margin-bottom: 8px;
+}
+.kpi-value {
+  font-size: 1.7rem;
+  font-weight: 700;
+  color: var(--text);
+  font-variant-numeric: tabular-nums;
+  line-height: 1;
+  margin-bottom: 6px;
+}
+.kpi-delta { font-size: .75rem; display: flex; align-items: center; gap: 4px; }
+.kpi-delta.up { color: var(--green); }
+.kpi-delta.down { color: var(--red); }
+
+/* CHARTS */
+.chart-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  margin-bottom: 24px;
+}
+.chart-card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 20px;
+}
+.chart-card.full { grid-column: 1 / -1; }
+.chart-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 16px;
+}
+.chart-title { font-size: .85rem; font-weight: 600; color: var(--text); margin-bottom: 2px; }
+.chart-sub { font-size: .7rem; color: var(--text-dim); }
+.period-tabs { display: flex; gap: 4px; }
+.period-btn {
+  padding: 4px 10px;
+  font-size: .68rem;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  background: none;
+  color: var(--text-dim);
+  cursor: pointer;
+  transition: all .15s;
+}
+.period-btn.active, .period-btn:hover {
+  background: var(--gold-glow);
+  border-color: var(--gold);
+  color: var(--gold);
+}
+
+/* TABLE */
+.data-table-wrap {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  overflow: hidden;
+  margin-bottom: 24px;
+}
+.table-header {
+  padding: 16px 20px;
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+.table-title { font-size: .85rem; font-weight: 600; color: var(--text); }
+.search-input {
+  padding: 7px 12px;
+  background: var(--card2);
+  border: 1px solid var(--border);
+  border-radius: 7px;
+  color: var(--text);
+  font-size: .78rem;
+  outline: none;
+  width: 180px;
+}
+.search-input::placeholder { color: var(--text-dim); }
+.search-input:focus { border-color: var(--gold); }
+table { width: 100%; border-collapse: collapse; }
+thead th {
+  padding: 10px 16px;
+  font-size: .65rem;
+  letter-spacing: .12em;
+  text-transform: uppercase;
+  color: var(--gold-dim);
+  text-align: left;
+  border-bottom: 1px solid var(--border);
+  white-space: nowrap;
+}
+tbody tr {
+  border-bottom: 1px solid rgba(201,169,110,.07);
+  transition: background .12s;
+}
+tbody tr:hover { background: var(--gold-glow); }
+tbody tr:last-child { border-bottom: none; }
+td { padding: 11px 16px; font-size: .82rem; color: var(--text); white-space: nowrap; }
+.td-name { font-weight: 500; }
+.td-gold { color: var(--gold); font-weight: 600; font-variant-numeric: tabular-nums; }
+.td-green { color: var(--green); font-weight: 600; }
+.td-red { color: var(--red); font-weight: 600; }
+.td-dim { color: var(--text-dim); }
+
+.pareto-badge { display: inline-block; padding: 2px 8px; border-radius: 4px; font-size: .7rem; font-weight: 600; }
+.pareto-a { background: rgba(201,169,110,.2); color: var(--gold); }
+.pareto-b { background: rgba(96,165,250,.15); color: var(--blue); }
+.pareto-c { background: rgba(107,114,128,.15); color: #9CA3AF; }
+
+/* PROCESO CARDS */
+.proc-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 24px; }
+.proc-card { background: var(--card); border: 1px solid var(--border); border-radius: 10px; overflow: hidden; }
+.proc-card-head {
+  padding: 14px 18px;
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.proc-card-title { font-size: .82rem; font-weight: 600; color: var(--text); display: flex; align-items: center; gap: 8px; }
+.proc-count { background: var(--gold-glow); border: 1px solid var(--border); color: var(--gold); font-size: .65rem; padding: 2px 7px; border-radius: 10px; font-weight: 700; }
+.btn-sm { padding: 5px 12px; font-size: .72rem; border: 1px solid var(--border); border-radius: 6px; background: none; color: var(--gold); cursor: pointer; transition: background .15s; }
+.btn-sm:hover { background: var(--gold-glow); }
+.btn-primary { background: var(--gold); color: #000; border-color: var(--gold); font-weight: 600; }
+.btn-primary:hover { background: #B8966A; }
+
+/* CITAS */
+.cita-item { display: flex; align-items: center; gap: 12px; padding: 12px 18px; border-bottom: 1px solid rgba(201,169,110,.07); transition: background .12s; cursor: pointer; }
+.cita-item:hover { background: var(--gold-glow); }
+.cita-item:last-child { border-bottom: none; }
+.cita-time { background: var(--card2); border: 1px solid var(--border); border-radius: 6px; padding: 6px 8px; text-align: center; min-width: 52px; }
+.cita-time .hour { font-size: .9rem; font-weight: 700; color: var(--gold); font-variant-numeric: tabular-nums; }
+.cita-time .ampm { font-size: .6rem; color: var(--text-dim); text-transform: uppercase; }
+.cita-info { flex: 1; min-width: 0; }
+.cita-name { font-size: .82rem; font-weight: 600; color: var(--text); }
+.cita-proc { font-size: .72rem; color: var(--text-dim); margin-top: 1px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.status-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+.status-dot.confirmed { background: var(--green); }
+.status-dot.pending   { background: #FBBF24; }
+.status-dot.done      { background: #6B7280; }
+
+/* KANBAN */
+.kanban-cols { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; padding: 14px; }
+.kanban-col-title { font-size: .65rem; letter-spacing: .12em; text-transform: uppercase; color: var(--text-dim); margin-bottom: 8px; padding-bottom: 6px; border-bottom: 1px solid var(--border); }
+.kanban-card { background: var(--card2); border: 1px solid var(--border); border-radius: 7px; padding: 10px 12px; margin-bottom: 8px; font-size: .78rem; }
+.kanban-card-name { font-weight: 600; color: var(--text); margin-bottom: 3px; }
+.kanban-card-proc { color: var(--text-dim); font-size: .7rem; }
+.kanban-card-tag { display: inline-block; margin-top: 6px; padding: 2px 6px; border-radius: 4px; font-size: .65rem; font-weight: 600; }
+.tag-facial { background: rgba(201,169,110,.2); color: var(--gold); }
+.tag-corporal { background: rgba(96,165,250,.15); color: var(--blue); }
+.tag-labios { background: rgba(248,113,113,.15); color: #F87171; }
+
+/* COTIZACIÓN */
+.cot-actions { display: flex; gap: 8px; }
+
+/* SIDEBAR FOOTER */
+.sidebar-footer { margin-top: auto; padding: 16px; border-top: 1px solid var(--border); }
+.logout-btn { display: flex; align-items: center; gap: 8px; padding: 9px 12px; color: var(--text-dim); cursor: pointer; border-radius: 7px; font-size: .8rem; transition: background .15s; width: 100%; background: none; border: none; }
+.logout-btn:hover { background: rgba(248,113,113,.1); color: var(--red); }
+
+/* RESPONSIVE */
+@media (max-width: 900px) {
+  .kpi-grid { grid-template-columns: repeat(2,1fr); }
+  .chart-row { grid-template-columns: 1fr; }
+  .chart-card.full { grid-column: auto; }
+  .proc-grid { grid-template-columns: 1fr; }
+}
+@media (max-width: 640px) {
+  :root { --sidebar-w: 0px; }
+  .sidebar { transform: translateX(-230px); width: 230px; }
+  .sidebar.open { transform: translateX(0); }
+  .main-wrap { margin-left: 0; }
+  .hamburger { display: flex; align-items: center; }
+  .kpi-grid { grid-template-columns: 1fr 1fr; }
+  .kanban-cols { grid-template-columns: 1fr; }
+  .content { padding: 16px; }
+}
+.overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,.5); z-index: 45; }
+.overlay.show { display: block; }
+</style>
+</head>
+<body>
+
+<!-- ══ PANTALLA DE LOGIN ══ -->
+<div id="login-screen">
+  <div class="login-box">
+    <div class="login-brand">G DOCTORS</div>
+    <div class="login-sub">Panel Administrativo</div>
+    <label class="login-label" for="pwd">Contraseña de acceso</label>
+    <input class="login-input" type="password" id="pwd" placeholder="••••••••" autocomplete="current-password" onkeydown="if(event.key==='Enter')doLogin()">
+    <button class="login-btn" onclick="doLogin()">Ingresar</button>
+    <div class="login-error" id="login-error">Contraseña incorrecta. Inténtalo de nuevo.</div>
+  </div>
+</div>
+
+<!-- ══ APP (oculto hasta login) ══ -->
+<div class="app" id="app" style="display:none">
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar-logo">
+      <div class="brand">G DOCTORS</div>
+      <div class="sub">Medicina Estética</div>
+      <div class="badge">Panel Administrativo</div>
+    </div>
+
+    <div class="nav-group">
+      <div class="nav-label">General</div>
+      <div class="nav-item active" data-view="dashboard" onclick="showView('dashboard',this)">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+        Dashboard
+      </div>
+    </div>
+
+    <div class="nav-group">
+      <div class="nav-label">Estadísticas de Ventas</div>
+      <div class="nav-item" data-view="ventas-cliente" onclick="showView('ventas-cliente',this)">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+        Por cliente y periodo
+      </div>
+      <div class="nav-item" data-view="ventas-producto" onclick="showView('ventas-producto',this)">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 00-2-2h-4a2 2 0 00-2 2v2"/></svg>
+        Por cliente y producto
+      </div>
+      <div class="nav-item" data-view="pareto" onclick="showView('pareto',this)">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/></svg>
+        Pareto de clientes
+      </div>
+      <div class="nav-item" data-view="incremento" onclick="showView('incremento',this)">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="20" x2="12" y2="10"/><line x1="18" y1="20" x2="18" y2="4"/><line x1="6" y1="20" x2="6" y2="16"/></svg>
+        Variación entre periodos
+      </div>
+    </div>
+
+    <div class="nav-group">
+      <div class="nav-label">Procesos Admin</div>
+      <div class="nav-item" data-view="citas" onclick="showView('citas',this)">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+        Agendamiento de citas
+      </div>
+      <div class="nav-item" data-view="solicitudes" onclick="showView('solicitudes',this)">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11"/></svg>
+        Solicitud procedimientos
+      </div>
+      <div class="nav-item" data-view="cotizacion" onclick="showView('cotizacion',this)">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
+        Cotización
+      </div>
+    </div>
+
+    <div class="sidebar-footer">
+      <button class="logout-btn" onclick="doLogout()">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+        Cerrar sesión
+      </button>
+    </div>
+  </aside>
+
+  <div class="overlay" id="overlay" onclick="closeSidebar()"></div>
+
+  <div class="main-wrap">
+    <header class="topbar">
+      <div class="hamburger" onclick="toggleSidebar()">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+      </div>
+      <div class="topbar-title" id="topbar-title">Dashboard</div>
+      <div class="topbar-badge" id="topbar-period">Sep 2024</div>
+      <div class="topbar-avatar">DR</div>
+    </header>
+
+    <div class="content">
+
+      <!-- DASHBOARD -->
+      <div class="view active" id="view-dashboard">
+        <div class="kpi-grid">
+          <div class="kpi-card"><div class="kpi-label">Ingresos del mes</div><div class="kpi-value">$18.4M</div><div class="kpi-delta up">▲ +12.3% vs agosto</div></div>
+          <div class="kpi-card"><div class="kpi-label">Citas este mes</div><div class="kpi-value">142</div><div class="kpi-delta up">▲ +8 vs agosto</div></div>
+          <div class="kpi-card"><div class="kpi-label">Clientes activos</div><div class="kpi-value">87</div><div class="kpi-delta up">▲ +5 nuevos</div></div>
+          <div class="kpi-card"><div class="kpi-label">Ticket promedio</div><div class="kpi-value">$129K</div><div class="kpi-delta down">▼ -2.1% vs agosto</div></div>
+        </div>
+        <div class="chart-row">
+          <div class="chart-card">
+            <div class="chart-header"><div><div class="chart-title">Ingresos mensuales</div><div class="chart-sub">Últimos 6 meses · COP</div></div></div>
+            <div><canvas id="chartIngresos" height="180"></canvas></div>
+          </div>
+          <div class="chart-card">
+            <div class="chart-header"><div><div class="chart-title">Procedimientos más solicitados</div><div class="chart-sub">Septiembre 2024</div></div></div>
+            <div><canvas id="chartProcs" height="180"></canvas></div>
+          </div>
+        </div>
+        <div class="data-table-wrap">
+          <div class="table-header">
+            <div class="table-title">Citas de hoy — Miércoles 18 sep</div>
+            <button class="btn-sm btn-primary">+ Nueva cita</button>
+          </div>
+          <div style="overflow-x:auto">
+          <table>
+            <thead><tr><th>Hora</th><th>Paciente</th><th>Procedimiento</th><th>Zona</th><th>Estado</th></tr></thead>
+            <tbody>
+              <tr><td>08:30</td><td class="td-name">María Gómez</td><td>Bótox preventivo</td><td>Frente</td><td><span class="pareto-badge pareto-a">Confirmada</span></td></tr>
+              <tr><td>09:15</td><td class="td-name">Valentina Ríos</td><td>Rinomodelación</td><td>Nariz</td><td><span class="pareto-badge pareto-a">Confirmada</span></td></tr>
+              <tr><td>10:00</td><td class="td-name">Andrea Castro</td><td>Ácido hialurónico</td><td>Labios</td><td><span class="pareto-badge pareto-b">En curso</span></td></tr>
+              <tr><td>11:30</td><td class="td-name">Laura Martínez</td><td>Lifting facial</td><td>Rostro</td><td><span class="pareto-badge pareto-c">Pendiente</span></td></tr>
+              <tr><td>14:00</td><td class="td-name">Camila Herrera</td><td>Reducción de grasa</td><td>Abdomen</td><td><span class="pareto-badge pareto-c">Pendiente</span></td></tr>
+            </tbody>
+          </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- VENTAS POR CLIENTE Y PERIODO -->
+      <div class="view" id="view-ventas-cliente">
+        <div class="chart-card full" style="margin-bottom:24px">
+          <div class="chart-header">
+            <div><div class="chart-title">Ventas totales por cliente por periodo</div><div class="chart-sub">Comparativo mensual — Top 8 clientes · COP</div></div>
+            <div class="period-tabs">
+              <button class="period-btn active">T3 2024</button>
+              <button class="period-btn">T2 2024</button>
+              <button class="period-btn">Anual</button>
+            </div>
+          </div>
+          <canvas id="chartClientesPeriodo" height="220"></canvas>
+        </div>
+        <div class="data-table-wrap">
+          <div class="table-header"><div class="table-title">Detalle por cliente</div><input class="search-input" placeholder="Buscar cliente…"/></div>
+          <div style="overflow-x:auto">
+          <table>
+            <thead><tr><th>#</th><th>Cliente</th><th>Jul 2024</th><th>Ago 2024</th><th>Sep 2024</th><th>Total T3</th><th>Δ%</th></tr></thead>
+            <tbody>
+              <tr><td class="td-dim">1</td><td class="td-name">María Gómez</td><td>$420.000</td><td>$380.000</td><td class="td-gold">$520.000</td><td class="td-gold">$1.320.000</td><td class="td-green">▲ +23.8%</td></tr>
+              <tr><td class="td-dim">2</td><td class="td-name">Valentina Ríos</td><td>$350.000</td><td>$490.000</td><td class="td-gold">$480.000</td><td class="td-gold">$1.320.000</td><td class="td-green">▲ +2.0%</td></tr>
+              <tr><td class="td-dim">3</td><td class="td-name">Andrea Castro</td><td>$290.000</td><td>$310.000</td><td class="td-gold">$440.000</td><td class="td-gold">$1.040.000</td><td class="td-green">▲ +41.9%</td></tr>
+              <tr><td class="td-dim">4</td><td class="td-name">Laura Martínez</td><td>$510.000</td><td>$280.000</td><td class="td-gold">$210.000</td><td class="td-gold">$1.000.000</td><td class="td-red">▼ -25.0%</td></tr>
+              <tr><td class="td-dim">5</td><td class="td-name">Camila Herrera</td><td>$180.000</td><td>$220.000</td><td class="td-gold">$390.000</td><td class="td-gold">$790.000</td><td class="td-green">▲ +77.3%</td></tr>
+            </tbody>
+          </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- VENTAS POR PRODUCTO -->
+      <div class="view" id="view-ventas-producto">
+        <div class="chart-row" style="margin-bottom:24px">
+          <div class="chart-card">
+            <div class="chart-header"><div><div class="chart-title">Ventas por procedimiento</div><div class="chart-sub">Top productos · Sep 2024</div></div></div>
+            <canvas id="chartProductos" height="200"></canvas>
+          </div>
+          <div class="chart-card">
+            <div class="chart-header"><div><div class="chart-title">Distribución de ingresos</div><div class="chart-sub">Por categoría · Sep 2024</div></div></div>
+            <canvas id="chartCategoria" height="200"></canvas>
+          </div>
+        </div>
+        <div class="data-table-wrap">
+          <div class="table-header"><div class="table-title">Ventas por cliente × procedimiento</div><input class="search-input" placeholder="Buscar…"/></div>
+          <div style="overflow-x:auto">
+          <table>
+            <thead><tr><th>Cliente</th><th>Bótox</th><th>Rellenos</th><th>Lifting</th><th>Corporal</th><th>Total</th></tr></thead>
+            <tbody>
+              <tr><td class="td-name">María Gómez</td><td>$260.000</td><td>$180.000</td><td>$80.000</td><td>—</td><td class="td-gold">$520.000</td></tr>
+              <tr><td class="td-name">Valentina Ríos</td><td>—</td><td>$200.000</td><td>$280.000</td><td>—</td><td class="td-gold">$480.000</td></tr>
+              <tr><td class="td-name">Andrea Castro</td><td>$120.000</td><td>$200.000</td><td>—</td><td>$120.000</td><td class="td-gold">$440.000</td></tr>
+              <tr><td class="td-name">Laura Martínez</td><td>$210.000</td><td>—</td><td>—</td><td>—</td><td class="td-gold">$210.000</td></tr>
+            </tbody>
+          </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- PARETO -->
+      <div class="view" id="view-pareto">
+        <div class="chart-card full" style="margin-bottom:24px">
+          <div class="chart-header"><div><div class="chart-title">Análisis de Pareto — Clientes</div><div class="chart-sub">20% de los clientes generan el 80% de los ingresos</div></div></div>
+          <canvas id="chartPareto" height="220"></canvas>
+        </div>
+        <div class="data-table-wrap">
+          <div class="table-header"><div class="table-title">Clasificación ABC de clientes</div></div>
+          <div style="overflow-x:auto">
+          <table>
+            <thead><tr><th>Pos.</th><th>Cliente</th><th>Ingresos T3</th><th>% del total</th><th>% acumulado</th><th>Categoría</th></tr></thead>
+            <tbody>
+              <tr><td class="td-dim">1</td><td class="td-name">María Gómez</td><td class="td-gold">$1.320.000</td><td>17.2%</td><td>17.2%</td><td><span class="pareto-badge pareto-a">A</span></td></tr>
+              <tr><td class="td-dim">2</td><td class="td-name">Valentina Ríos</td><td class="td-gold">$1.320.000</td><td>17.2%</td><td>34.4%</td><td><span class="pareto-badge pareto-a">A</span></td></tr>
+              <tr><td class="td-dim">3</td><td class="td-name">Andrea Castro</td><td class="td-gold">$1.040.000</td><td>13.5%</td><td>47.9%</td><td><span class="pareto-badge pareto-a">A</span></td></tr>
+              <tr><td class="td-dim">4</td><td class="td-name">Laura Martínez</td><td class="td-gold">$1.000.000</td><td>13.0%</td><td>60.9%</td><td><span class="pareto-badge pareto-a">A</span></td></tr>
+              <tr><td class="td-dim">5</td><td class="td-name">Camila Herrera</td><td class="td-gold">$790.000</td><td>10.3%</td><td>71.2%</td><td><span class="pareto-badge pareto-b">B</span></td></tr>
+              <tr><td class="td-dim">6</td><td class="td-name">Sofía Moreno</td><td class="td-gold">$540.000</td><td>7.0%</td><td>78.2%</td><td><span class="pareto-badge pareto-b">B</span></td></tr>
+              <tr><td class="td-dim">7</td><td class="td-name">Daniela Pérez</td><td class="td-gold">$380.000</td><td>4.9%</td><td>83.1%</td><td><span class="pareto-badge pareto-c">C</span></td></tr>
+              <tr><td class="td-dim">8</td><td class="td-name">Isabella Ruiz</td><td class="td-gold">$320.000</td><td>4.2%</td><td>87.3%</td><td><span class="pareto-badge pareto-c">C</span></td></tr>
+            </tbody>
+          </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- VARIACIÓN -->
+      <div class="view" id="view-incremento">
+        <div class="kpi-grid" style="margin-bottom:24px">
+          <div class="kpi-card"><div class="kpi-label">Var. total mes</div><div class="kpi-value" style="color:var(--green)">+12.3%</div><div class="kpi-delta up">Sep vs Ago 2024</div></div>
+          <div class="kpi-card"><div class="kpi-label">Mayor crecimiento</div><div class="kpi-value" style="font-size:1.1rem">Camila H.</div><div class="kpi-delta up">▲ +77.3%</div></div>
+          <div class="kpi-card"><div class="kpi-label">Mayor caída</div><div class="kpi-value" style="font-size:1.1rem">Laura M.</div><div class="kpi-delta down">▼ -25.0%</div></div>
+          <div class="kpi-card"><div class="kpi-label">Nuevos clientes</div><div class="kpi-value">+5</div><div class="kpi-delta up">vs 3 en agosto</div></div>
+        </div>
+        <div class="chart-card full" style="margin-bottom:24px">
+          <div class="chart-header"><div><div class="chart-title">Variación de ventas mes a mes</div><div class="chart-sub">% de incremento o disminución por cliente</div></div></div>
+          <canvas id="chartVariacion" height="220"></canvas>
+        </div>
+      </div>
+
+      <!-- CITAS -->
+      <div class="view" id="view-citas">
+        <div class="proc-grid">
+          <div class="proc-card" style="grid-column:1/-1">
+            <div class="proc-card-head">
+              <div class="proc-card-title">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+                Agenda — Miércoles 18 septiembre 2024
+                <span class="proc-count">7 citas</span>
+              </div>
+              <button class="btn-sm btn-primary">+ Agendar</button>
+            </div>
+            <div class="cita-item"><div class="cita-time"><div class="hour">08:30</div><div class="ampm">am</div></div><div class="cita-info"><div class="cita-name">María Gómez</div><div class="cita-proc">Bótox preventivo · Frente y entrecejo</div></div><div class="status-dot confirmed"></div></div>
+            <div class="cita-item"><div class="cita-time"><div class="hour">09:15</div><div class="ampm">am</div></div><div class="cita-info"><div class="cita-name">Valentina Ríos</div><div class="cita-proc">Rinomodelación · Nariz</div></div><div class="status-dot confirmed"></div></div>
+            <div class="cita-item"><div class="cita-time"><div class="hour">10:00</div><div class="ampm">am</div></div><div class="cita-info"><div class="cita-name">Andrea Castro</div><div class="cita-proc">Ácido hialurónico · Labios</div></div><div class="status-dot done"></div></div>
+            <div class="cita-item"><div class="cita-time"><div class="hour">11:30</div><div class="ampm">am</div></div><div class="cita-info"><div class="cita-name">Laura Martínez</div><div class="cita-proc">Lifting facial · Rostro completo</div></div><div class="status-dot pending"></div></div>
+            <div class="cita-item"><div class="cita-time"><div class="hour">02:00</div><div class="ampm">pm</div></div><div class="cita-info"><div class="cita-name">Camila Herrera</div><div class="cita-proc">Reducción de grasa · Abdomen</div></div><div class="status-dot pending"></div></div>
+            <div class="cita-item"><div class="cita-time"><div class="hour">03:30</div><div class="ampm">pm</div></div><div class="cita-info"><div class="cita-name">Sofía Moreno</div><div class="cita-proc">Rellenos dérmicos · Pómulos</div></div><div class="status-dot pending"></div></div>
+            <div class="cita-item"><div class="cita-time"><div class="hour">05:00</div><div class="ampm">pm</div></div><div class="cita-info"><div class="cita-name">Daniela Pérez</div><div class="cita-proc">Consulta inicial · Evaluación general</div></div><div class="status-dot pending"></div></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- SOLICITUDES -->
+      <div class="view" id="view-solicitudes">
+        <div class="proc-card" style="margin-bottom:24px">
+          <div class="proc-card-head">
+            <div class="proc-card-title"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 11l3 3L22 4"/></svg>Solicitudes de procedimientos<span class="proc-count">9 activas</span></div>
+            <button class="btn-sm btn-primary">+ Nueva</button>
+          </div>
+          <div class="kanban-cols">
+            <div>
+              <div class="kanban-col-title">Pendiente revisión</div>
+              <div class="kanban-card"><div class="kanban-card-name">Camila Herrera</div><div class="kanban-card-proc">Reducción de grasa localizada</div><div><span class="kanban-card-tag tag-corporal">Corporal</span></div></div>
+              <div class="kanban-card"><div class="kanban-card-name">Isabella Ruiz</div><div class="kanban-card-proc">Contorno de mandíbula</div><div><span class="kanban-card-tag tag-facial">Facial</span></div></div>
+              <div class="kanban-card"><div class="kanban-card-name">Sara González</div><div class="kanban-card-proc">Aumento de labios</div><div><span class="kanban-card-tag tag-labios">Labios</span></div></div>
+            </div>
+            <div>
+              <div class="kanban-col-title">En evaluación médica</div>
+              <div class="kanban-card"><div class="kanban-card-name">Valentina Ríos</div><div class="kanban-card-proc">Rinomodelación avanzada</div><div><span class="kanban-card-tag tag-facial">Facial</span></div></div>
+              <div class="kanban-card"><div class="kanban-card-name">Laura Martínez</div><div class="kanban-card-proc">Lifting facial completo</div><div><span class="kanban-card-tag tag-facial">Facial</span></div></div>
+            </div>
+            <div>
+              <div class="kanban-col-title">Aprobado — Agendando</div>
+              <div class="kanban-card"><div class="kanban-card-name">María Gómez</div><div class="kanban-card-proc">Plan bótox trimestral</div><div><span class="kanban-card-tag tag-facial">Facial</span></div></div>
+              <div class="kanban-card"><div class="kanban-card-name">Andrea Castro</div><div class="kanban-card-proc">Paquete rejuvenecimiento</div><div><span class="kanban-card-tag tag-facial">Facial</span></div></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- COTIZACIÓN -->
+      <div class="view" id="view-cotizacion">
+        <div class="data-table-wrap" style="margin-bottom:24px">
+          <div class="table-header"><div class="table-title">Cotizaciones activas</div><button class="btn-sm btn-primary">+ Nueva cotización</button></div>
+          <div style="overflow-x:auto">
+          <table>
+            <thead><tr><th>N°</th><th>Cliente</th><th>Procedimiento</th><th>Valor</th><th>Fecha</th><th>Estado</th><th>Acciones</th></tr></thead>
+            <tbody>
+              <tr><td class="td-dim">#0042</td><td class="td-name">Camila Herrera</td><td>Reducción de grasa abdominal</td><td class="td-gold">$1.800.000</td><td class="td-dim">16 sep 2024</td><td><span class="pareto-badge pareto-b">Enviada</span></td><td><div class="cot-actions"><button class="btn-sm">Ver</button><button class="btn-sm">Editar</button></div></td></tr>
+              <tr><td class="td-dim">#0041</td><td class="td-name">Isabella Ruiz</td><td>Contorno de mandíbula + Pómulos</td><td class="td-gold">$2.400.000</td><td class="td-dim">14 sep 2024</td><td><span class="pareto-badge pareto-c">Pendiente</span></td><td><div class="cot-actions"><button class="btn-sm">Ver</button><button class="btn-sm">Editar</button></div></td></tr>
+              <tr><td class="td-dim">#0040</td><td class="td-name">Sara González</td><td>Aumento de labios · ácido hialurónico</td><td class="td-gold">$650.000</td><td class="td-dim">12 sep 2024</td><td><span class="pareto-badge pareto-a">Aprobada</span></td><td><div class="cot-actions"><button class="btn-sm">Ver</button><button class="btn-sm btn-primary">Agendar</button></div></td></tr>
+              <tr><td class="td-dim">#0039</td><td class="td-name">Sofía Moreno</td><td>Plan rellenos dérmicos completo</td><td class="td-gold">$3.200.000</td><td class="td-dim">10 sep 2024</td><td><span class="pareto-badge pareto-a">Aprobada</span></td><td><div class="cot-actions"><button class="btn-sm">Ver</button><button class="btn-sm btn-primary">Agendar</button></div></td></tr>
+            </tbody>
+          </table>
+          </div>
+        </div>
+      </div>
+
+    </div><!-- /content -->
+  </div><!-- /main-wrap -->
+</div><!-- /app -->
+
+<script>
+/* ══ LOGIN ══ */
+const PWD = 'Gdoctors2025';   // ← cambia esta contraseña
+
+function doLogin() {
+  const val = document.getElementById('pwd').value;
+  if (val === PWD) {
+    try { sessionStorage.setItem('gd_auth', '1'); } catch(e){}
+    document.getElementById('login-screen').style.display = 'none';
+    document.getElementById('app').style.display = 'flex';
+    renderDashboard();
+    chartsRendered.dashboard = true;
+  } else {
+    const inp = document.getElementById('pwd');
+    const err = document.getElementById('login-error');
+    inp.classList.add('error');
+    err.style.display = 'block';
+    inp.value = '';
+    inp.focus();
+    setTimeout(() => inp.classList.remove('error'), 1200);
+  }
+}
+
+function doLogout() {
+  try { sessionStorage.removeItem('gd_auth'); } catch(e){}
+  document.getElementById('app').style.display = 'none';
+  document.getElementById('login-screen').style.display = 'flex';
+  document.getElementById('pwd').value = '';
+  document.getElementById('login-error').style.display = 'none';
+}
+
+// Verificar sesión al cargar
+window.addEventListener('DOMContentLoaded', () => {
+  let auth = false;
+  try { auth = sessionStorage.getItem('gd_auth') === '1'; } catch(e){}
+  if (auth) {
+    document.getElementById('login-screen').style.display = 'none';
+    document.getElementById('app').style.display = 'flex';
+    renderDashboard();
+    chartsRendered.dashboard = true;
+  }
+});
+
+/* ══ NAVEGACIÓN ══ */
+const titles = {
+  dashboard: 'Dashboard', 'ventas-cliente': 'Ventas por cliente y periodo',
+  'ventas-producto': 'Ventas por cliente × producto', pareto: 'Pareto de clientes',
+  incremento: 'Variación entre periodos', citas: 'Agendamiento de citas',
+  solicitudes: 'Solicitud de procedimientos', cotizacion: 'Cotizaciones'
+};
+function showView(id, el) {
+  document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+  document.getElementById('view-' + id).classList.add('active');
+  el.classList.add('active');
+  document.getElementById('topbar-title').textContent = titles[id] || id;
+  closeSidebar();
+  if (!chartsRendered[id]) { renderChart(id); chartsRendered[id] = true; }
+}
+function toggleSidebar() {
+  document.getElementById('sidebar').classList.toggle('open');
+  document.getElementById('overlay').classList.toggle('show');
+}
+function closeSidebar() {
+  document.getElementById('sidebar').classList.remove('open');
+  document.getElementById('overlay').classList.remove('show');
+}
+
+/* ══ CHARTS ══ */
+const GOLD='#C9A96E',GOLD_DIM='rgba(201,169,110,.45)',GOLD_FILL='rgba(201,169,110,.15)',GREEN='#34D399',RED='#F87171',BLUE='#60A5FA',TEXT='#EBD9B8',TEXT_DIM='rgba(235,217,184,.4)';
+Chart.defaults.color=TEXT_DIM;Chart.defaults.font.family="Inter,system-ui,sans-serif";Chart.defaults.font.size=11;
+const chartsRendered={dashboard:false};
+function mkGrid(){return{color:'rgba(201,169,110,.08)',drawBorder:false};}
+function mkTick(){return{color:TEXT_DIM};}
+
+function renderDashboard(){
+  new Chart(document.getElementById('chartIngresos'),{type:'line',data:{labels:['Abr','May','Jun','Jul','Ago','Sep'],datasets:[{label:'Ingresos COP',data:[11200000,13400000,12800000,14600000,16400000,18400000],borderColor:GOLD,backgroundColor:GOLD_FILL,fill:true,tension:.4,pointBackgroundColor:GOLD,pointRadius:4}]},options:{responsive:true,plugins:{legend:{display:false}},scales:{x:{grid:mkGrid(),ticks:mkTick()},y:{grid:mkGrid(),ticks:{...mkTick(),callback:v=>'$'+(v/1000000).toFixed(1)+'M'}}}}});
+  new Chart(document.getElementById('chartProcs'),{type:'doughnut',data:{labels:['Bótox','Rellenos','Lifting','Corporal','Otros'],datasets:[{data:[35,28,18,12,7],backgroundColor:[GOLD,'#8B6A3E','rgba(201,169,110,.4)',BLUE,'rgba(201,169,110,.2)'],borderWidth:0}]},options:{responsive:true,cutout:'65%',plugins:{legend:{position:'bottom',labels:{color:TEXT_DIM,padding:12,boxWidth:10}}}}});
+}
+
+function renderChart(id){
+  if(id==='ventas-cliente'){new Chart(document.getElementById('chartClientesPeriodo'),{type:'bar',data:{labels:['María G.','Valentina R.','Andrea C.','Laura M.','Camila H.'],datasets:[{label:'Jul 2024',data:[420000,350000,290000,510000,180000],backgroundColor:'rgba(201,169,110,.35)'},{label:'Ago 2024',data:[380000,490000,310000,280000,220000],backgroundColor:'rgba(201,169,110,.55)'},{label:'Sep 2024',data:[520000,480000,440000,210000,390000],backgroundColor:GOLD}]},options:{responsive:true,plugins:{legend:{labels:{color:TEXT_DIM}}},scales:{x:{grid:mkGrid(),ticks:mkTick()},y:{grid:mkGrid(),ticks:{...mkTick(),callback:v=>'$'+(v/1000).toFixed(0)+'K'}}}}});}
+  if(id==='ventas-producto'){new Chart(document.getElementById('chartProductos'),{type:'bar',indexAxis:'y',data:{labels:['Bótox','Rellenos dérmicos','Lifting facial','Reducción grasa','Rinomodelación'],datasets:[{label:'Ingresos Sep',data:[590000,580000,490000,320000,280000],backgroundColor:GOLD}]},options:{responsive:true,plugins:{legend:{display:false}},scales:{x:{grid:mkGrid(),ticks:{...mkTick(),callback:v=>'$'+(v/1000)+'K'}},y:{grid:mkGrid(),ticks:mkTick()}}}});new Chart(document.getElementById('chartCategoria'),{type:'doughnut',data:{labels:['Facial','Corporal','Labios','Consulta'],datasets:[{data:[62,21,12,5],backgroundColor:[GOLD,'#8B6A3E',BLUE,'rgba(201,169,110,.25)'],borderWidth:0}]},options:{responsive:true,cutout:'60%',plugins:{legend:{position:'bottom',labels:{color:TEXT_DIM,padding:10,boxWidth:10}}}}});}
+  if(id==='pareto'){new Chart(document.getElementById('chartPareto'),{data:{labels:['María G.','Valentina R.','Andrea C.','Laura M.','Camila H.','Sofía M.','Daniela P.','Isabella R.'],datasets:[{type:'bar',label:'Ingresos T3',data:[1320000,1320000,1040000,1000000,790000,540000,380000,320000],backgroundColor:GOLD,yAxisID:'y'},{type:'line',label:'% Acumulado',data:[17.2,34.4,47.9,60.9,71.2,78.2,83.1,87.3],borderColor:GREEN,backgroundColor:'transparent',pointBackgroundColor:GREEN,pointRadius:4,tension:.3,yAxisID:'y2'}]},options:{responsive:true,plugins:{legend:{labels:{color:TEXT_DIM}}},scales:{y:{grid:mkGrid(),ticks:{...mkTick(),callback:v=>'$'+(v/1000)+'K'},position:'left'},y2:{grid:{display:false},ticks:{...mkTick(),callback:v=>v+'%'},position:'right',max:110},x:{grid:mkGrid(),ticks:mkTick()}}}});}
+  if(id==='incremento'){new Chart(document.getElementById('chartVariacion'),{type:'bar',data:{labels:['María G.','Valentina R.','Andrea C.','Laura M.','Camila H.','Sofía M.','Daniela P.'],datasets:[{label:'% variación Sep vs Ago',data:[23.8,2.0,41.9,-25.0,77.3,12.5,-8.2],backgroundColor:ctx=>ctx.parsed.y>=0?'rgba(52,211,153,.7)':'rgba(248,113,113,.7)',borderRadius:4}]},options:{responsive:true,plugins:{legend:{display:false}},scales:{x:{grid:mkGrid(),ticks:mkTick()},y:{grid:mkGrid(),ticks:{...mkTick(),callback:v=>v+'%'}}}}});}
+}
+</script>
+</body>
+</html>
