@@ -1364,31 +1364,12 @@ main.open .panel{transform:translateX(0)}/* panel slide in */
   }
 
   /* ────────────────────────────────────────────────────
-     7. VALOR-PANEL — sección beige debajo del mapa
+     7. VALOR-PANEL — oculto en móvil
+        En móvil no hace falta: el panel de servicio cubre
+        toda la pantalla al elegir una zona.
+        El valor-panel se muestra solo en desktop (sidebar derecho).
   ──────────────────────────────────────────────────── */
-  .valor-panel{
-    display: block !important;
-    width: 100% !important;
-    height: auto !important;
-    min-height: auto !important;
-    overflow: visible !important;
-    padding: 40px 20px 60px !important;
-    border-left: none !important;
-    border-top: 1px solid rgba(201,169,110,.3) !important;
-    box-sizing: border-box !important;
-    /* Fondo oscuro en móvil — igual que el resto del sitio */
-    background: #1A130E !important;
-  }
-  /* Ajustar textos del valor-panel para fondo oscuro */
-  .vp-eyebrow{ color: var(--gold) !important; }
-  .vp-headline{ color: #F5EDD6 !important; }
-  .vp-sub{ color: rgba(245,237,214,.7) !important; }
-  .vp-divider{ background: rgba(201,169,110,.25) !important; }
-  .vp-benefit-icon{ background: rgba(201,169,110,.1) !important; border-color: rgba(201,169,110,.2) !important; color: var(--gold) !important; }
-  .vp-benefit-title{ color: #F5EDD6 !important; }
-  .vp-benefit-desc{ color: rgba(245,237,214,.6) !important; }
-  .vp-rating-score, .vp-rating-text{ color: rgba(245,237,214,.55) !important; }
-  .vp-stars svg{ fill: var(--gold) !important; }
+  .valor-panel{ display: none !important; }
 
   /* ────────────────────────────────────────────────────
      8. VALOR-PANEL textos — escala para móvil
